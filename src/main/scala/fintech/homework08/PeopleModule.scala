@@ -24,7 +24,7 @@ trait PeopleModule {
 //    storePerson(Person("Alice", LocalDate.of(1970, 1, 1))).execute(uri)
 //    storePerson(Person("Bob", LocalDate.of(1981, 5, 12))).execute(uri)
 //    storePerson(Person("Charlie", LocalDate.of(1979, 2, 20))).execute(uri)
-    val res = for {
+    for {
       _ <- DBRes.update("DROP TABLE people", List.empty)
       _ <- DBRes.update("CREATE TABLE people(name VARCHAR(256), birthday DATE)",
                         List.empty)
@@ -34,6 +34,5 @@ trait PeopleModule {
       _ <- storePerson(Person("Charlie", LocalDate.of(1979, 2, 20)))
 
     } yield ()
-    res
   }
 }
