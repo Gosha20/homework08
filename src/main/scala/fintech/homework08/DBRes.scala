@@ -14,9 +14,8 @@ case class DBRes[A](run: Connection => A) {
     res
   }
 
-  def map[T](f: A => T) : DBRes[T] = DBRes(connection => f(run(connection)))
-
-  def flatMap[T](f: A=> DBRes[T]): DBRes[T] = DBRes(s => f(run(s)).run(s))
+  def map[T](f: A => T): DBRes[T] = DBRes(conn => f(run(conn)))
+  def flatMap[T](f: A => DBRes[T]): DBRes[T] = DBRes(conn => f(run(conn)).run(conn))
 }
 
 object DBRes {

@@ -14,24 +14,21 @@ object PeopleApp extends PeopleModule {
 
   val uri = "jdbc:h2:~/dbres"
 
-  def getOldPerson =
+  def getOldPerson: DBRes[List[PeopleApp.Person]] =
     DBRes.select("SELECT * FROM people WHERE birthday < ?", List(LocalDate.of(1979, 2, 20)))(readPerson)
 
-  def clonePerson(person: Person) = {
+  def clonePerson(person: Person): DBRes[PeopleApp.Person] = {
     val clone = person.copy(birthday = LocalDate.now())
     storePerson(clone).map(_ => clone)
   }
 
   def main(args: Array[String]): Unit = {
-
-    for (
+    val p = setup
+    val s = for {
       _ <- setup
-      oldPerson <- getOldPerson
-      clone <- clonePerson(oldPerson.head)
-    )
-//    val old = getOldPerson()
-//    val clone = clonePerson(old)
-
-    println(clone)
+      old <- getOldPerson
+      clone <- clonePerson(old.head)
+    } yield clone
+    println(s.execute(uri))
   }
 }
