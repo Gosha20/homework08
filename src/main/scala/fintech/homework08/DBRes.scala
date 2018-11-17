@@ -13,6 +13,10 @@ case class DBRes[A](run: Connection => A) {
     println("Closing connection to DB...")
     res
   }
+
+  def map[T](f: A => T) : DBRes[T] = DBRes(connection => f(run(connection)))
+
+  def flatMap[T](f: A=> DBRes[T]): DBRes[T] = DBRes(s => f(run(s)).run(s))
 }
 
 object DBRes {
